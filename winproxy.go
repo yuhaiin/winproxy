@@ -5,6 +5,7 @@ package winproxy
 #include "c/proxy.c"
 */
 import "C"
+import "unsafe"
 
 func SetProxy(enable bool) bool {
 	if enable {
@@ -15,10 +16,14 @@ func SetProxy(enable bool) bool {
 }
 
 func SetServer(server string) bool {
-	return C.set_system_proxy_server(C.CString(server)) == 1
+	s := C.CString(server)
+	defer C.free(unsafe.Pointer(s))
+	return C.set_system_proxy_server(s) == 1
 }
 
 // SetBypassList such as "localhost;127.*;10.*;172.16.*;172.17.*;172.18.*;172.19.*;
 func SetBypassList(bypass string) bool {
-	return C.set_system_proxy_bypass_list(C.CString(bypass)) == 1
+	s := C.CString(bypass)
+	defer C.free(unsafe.Pointer(s))
+	return C.set_system_proxy_bypass_list(s) == 1
 }
